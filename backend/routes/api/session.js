@@ -43,7 +43,7 @@ router.post(
     }
   );
 
-  router.delete(
+router.delete(
     '/',
     (_req, res) => {
       res.clearCookie('token');
