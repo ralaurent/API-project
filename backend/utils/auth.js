@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { jwtConfig } = require('../config');
-const { User } = require('../db/models');
+const { User, Spot } = require('../db/models');
 
 const { secret, expiresIn } = jwtConfig;
 
@@ -68,4 +68,20 @@ const requireAuth = function (req, _res, next) {
     return next(err);
 }
 
-module.exports = { setTokenCookie, restoreUser, requireAuth };
+const authorizeSpot = async function (req, _res, next) {
+    const user = await User.findByPk(req.user.id)
+    const spots = await user.getSpots({
+        where: {
+            id: req.params.spotId
+        }
+    })
+    if (spots.length) return next();
+  
+    const err = new Error('Forbidden');
+    err.title = 'Forbidden';
+    err.errors = { message: 'Forbidden' };
+    err.status = 401;
+    return next(err);
+}
+
+module.exports = { setTokenCookie, restoreUser, requireAuth, authorizeSpot };
