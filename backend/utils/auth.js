@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { jwtConfig } = require('../config');
-const { User, Spot } = require('../db/models');
+const { User, Spot, Review } = require('../db/models');
 
 const { secret, expiresIn } = jwtConfig;
 
@@ -75,7 +75,8 @@ const authorizeSpot = async function (req, _res, next) {
             id: req.params.spotId
         }
     })
-    if (spots.length) return next();
+    const spot = await Spot.findByPk(req.params.spotId)
+    if (spots.length && spot.ownerId === req.user.id) return next();
   
     const err = new Error('Forbidden');
     err.title = 'Forbidden';
@@ -84,4 +85,21 @@ const authorizeSpot = async function (req, _res, next) {
     return next(err);
 }
 
-module.exports = { setTokenCookie, restoreUser, requireAuth, authorizeSpot };
+const authorizeReview = async function (req, _res, next) {
+    const user = await User.findByPk(req.user.id)
+    const reviews = await user.getReviews({
+        where: {
+            id: req.params.reviewId
+        }
+    })
+    const review = await Review.findByPk(req.params.reviewId)
+    if (reviews.length && review.userId === req.user.id) return next();
+  
+    const err = new Error('Forbidden');
+    err.title = 'Forbidden';
+    err.errors = { message: 'Forbidden' };
+    err.status = 401;
+    return next(err);
+}
+
+module.exports = { setTokenCookie, restoreUser, requireAuth, authorizeSpot, authorizeReview };

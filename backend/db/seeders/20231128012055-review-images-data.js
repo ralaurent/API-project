@@ -25,19 +25,19 @@ module.exports = {
         url: "https://example.com/review1"
       },
       {
-        reviewId: 1,
+        reviewId: 2,
         url: "https://example.com/review2"
       },
       {
-        reviewId: 1,
+        reviewId: 4,
         url: "https://example.com/review3"
       },
       {
-        reviewId: 1,
+        reviewId: 3,
         url: "https://example.com/review4"
       },
       {
-        reviewId: 1,
+        reviewId: 5,
         url: "https://example.com/review5"
       }
     ], { validate: true })

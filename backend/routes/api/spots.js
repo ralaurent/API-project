@@ -2,7 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 
 const { setTokenCookie, requireAuth, authorizeSpot } = require('../../utils/auth');
-const { User, Spot, SpotImage, Review, sequelize } = require('../../db/models');
+const { User, Spot, SpotImage, Review, ReviewImage, sequelize } = require('../../db/models');
 
 const router = express.Router();
 
@@ -52,6 +52,17 @@ const validateSpot = [
     handleValidationErrors
   ];
 
+const validateReview = [
+    check('review')
+      .exists({ checkFalsy: true })
+      .notEmpty()
+      .withMessage('Review text is required'),
+    check('stars')
+      .isInt({ min: 1, max: 5 })
+      .withMessage('Stars must be an integer from 1 to 5'),
+    handleValidationErrors
+  ];
+
 router.get('/', async(req, res) => {
     const Spots = await Spot.findAll({})
 
@@ -66,6 +77,9 @@ router.get('/', async(req, res) => {
           }, 0)
 
         const image = await spot.getSpotImages({
+            where: { 
+                preview: true
+            },
             attributes: ['url']
         })
         
@@ -232,6 +246,65 @@ router.delete('/:spotId', requireAuth, authorizeSpot, async(req, res) => {
     res.json({
         "message": "Successfully deleted"
     })
+})
+
+router.get('/:spotId/reviews', async(req, res) => {
+    const spot = await Spot.findByPk(req.params.spotId)
+
+    if(!spot){
+        return res.status(404).json({
+            "message": "Spot couldn't be found"
+        })
+    }
+
+    const Reviews = await spot.getReviews({
+        include: [
+            {
+                model: User,
+                attributes: ["id", "firstName", "lastName"]
+            },
+            {
+                model: ReviewImage,
+                attributes: ["id", "url"]
+            },
+        ]
+    })
+
+    res.json({
+        Reviews
+    })
+})
+
+router.post('/:spotId/reviews', requireAuth, validateReview, async(req, res) => {
+    const userId = req.user.id
+
+    const spot = await Spot.findByPk(req.params.spotId)
+
+    if(!spot){
+        return res.status(404).json({
+            "message": "Spot couldn't be found"
+        })
+    }
+
+    const usersReviews = await spot.getReviews({
+        where: {
+            userId: userId
+        }
+    })
+
+    if(usersReviews.length){
+        return res.status(500).json({
+            "message": "User already has a review for this spot"
+        })
+    }
+
+    const { review, stars } = req.body
+
+    const newReview = await spot.createReview({
+        review, stars, userId
+    })
+
+    res.json(newReview)
 })
 
 module.exports = router;
