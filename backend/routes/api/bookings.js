@@ -54,7 +54,7 @@ router.get('/current', requireAuth, async(req, res) => {
     })
 })
 
-router.put('/:bookingId', requireAuth, authorizeBooking, validateBooking, async(req, res, next) => {
+router.put('/:bookingId', validateBooking, requireAuth, authorizeBooking, async(req, res, next) => {
     const booking = await Booking.findByPk(req.params.bookingId)
 
     const { startDate, endDate } = req.body

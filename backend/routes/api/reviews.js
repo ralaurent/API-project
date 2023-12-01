@@ -89,7 +89,7 @@ router.post('/:reviewId/images', requireAuth, authorizeReview, async(req, res) =
     })
 })
 
-router.put('/:reviewId', requireAuth, authorizeReview, validateReview, async(req, res) => {
+router.put('/:reviewId', validateReview, requireAuth, authorizeReview, async(req, res) => {
     const reviews = await Review.findByPk(req.params.reviewId)
 
     const { review, stars } = req.body

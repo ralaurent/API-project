@@ -236,7 +236,7 @@ router.get('/:spotId', async(req, res) => {
     res.json(spot)
 })
 
-router.post('/', requireAuth, validateSpot, async(req, res) => {
+router.post('/', validateSpot, requireAuth,  async(req, res) => {
     const { address, city, state, country, lat, lng, name, description, price } = req.body
 
     const ownerId = req.user.id
@@ -264,7 +264,7 @@ router.post('/:spotId/images', requireAuth, authorizeSpot, async (req, res) => {
     })
 })
 
-router.put('/:spotId', requireAuth, authorizeSpot, validateSpot, async (req, res) => {
+router.put('/:spotId', validateSpot, requireAuth, authorizeSpot, async (req, res) => {
     const { address, city, state, country, lat, lng, name, description, price } = req.body
 
     const spot = await Spot.findByPk(req.params.spotId)
@@ -321,7 +321,7 @@ router.get('/:spotId/reviews', async(req, res) => {
     })
 })
 
-router.post('/:spotId/reviews', requireAuth, validateReview, async(req, res) => {
+router.post('/:spotId/reviews', validateReview, requireAuth, async(req, res) => {
     const userId = req.user.id
 
     const spot = await Spot.findByPk(req.params.spotId)
@@ -386,7 +386,7 @@ router.get('/:spotId/bookings', requireAuth, async(req, res) => {
 
 })
 
-router.post('/:spotId/bookings', requireAuth, unauthorizedSpot, validateBooking, async(req, res, next) => {
+router.post('/:spotId/bookings', validateBooking, requireAuth, unauthorizedSpot, async(req, res, next) => {
     const spot = await Spot.findByPk(req.params.spotId)
 
     const { startDate, endDate } = req.body

@@ -53,7 +53,6 @@ module.exports = {
         unique: true
       }
     )
-    
   },
   async down(queryInterface, Sequelize) {
     options.tableName = "Bookings";
