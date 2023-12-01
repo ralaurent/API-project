@@ -6,7 +6,7 @@ const { User, Spot, SpotImage, Review, ReviewImage, sequelize } = require('../..
 
 const router = express.Router();
 
-const { check, body } = require('express-validator');
+const { check, body, query } = require('express-validator');
 const { handleValidationErrors, handleBookingValidationErrors } = require('../../utils/validation');
 
 const validateSpot = [
@@ -71,42 +71,42 @@ const validateBooking = [
   ];
 
 const validateFilters = [
-    check('page')
+    query('page')
       .exists({ checkFalsy: true })
       .notEmpty()
       .isInt({ min: 1, max: 10 })
       .withMessage('Page must be greater than or equal to 1'),
-    check('size')
+    query('size')
       .exists({ checkFalsy: true })
       .notEmpty()
       .isInt({ min: 1, max: 20 })
       .withMessage('Size must be greater than or equal to 1'),
-    check('minLat')
+    query('minLat')
       .exists({ checkFalsy: true })
       .notEmpty()
       .isNumeric()
       .withMessage('Maximum latitude is invalid'),
-    check('maxLat')
+    query('maxLat')
       .exists({ checkFalsy: true })
       .notEmpty()
       .isNumeric()
       .withMessage('Minimum latitude is invalid'),
-    check('minLng')
+    query('minLng')
       .exists({ checkFalsy: true })
       .notEmpty()
       .isNumeric()
       .withMessage('Maximum longitude is invalid'),
-    check('maxLng')
+    query('maxLng')
       .exists({ checkFalsy: true })
       .notEmpty()
       .isNumeric()
       .withMessage('Minimum longitude is invalid'),
-    check('minPrice')
+    query('minPrice')
       .exists({ checkFalsy: true })
       .notEmpty()
       .isInt({ min: 0 })
       .withMessage('Minimum price must be greater than or equal to 0'),
-    check('maxPrice')
+    query('maxPrice')
       .exists({ checkFalsy: true })
       .notEmpty()
       .isInt({ min: 0 })
@@ -115,7 +115,7 @@ const validateFilters = [
   ];
 
 router.get('/', validateFilters, async(req, res) => {
-    const { page, size } = req.params
+    const { page, size } = req.query
 
     const pagination = {
         limit: size,
