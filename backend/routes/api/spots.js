@@ -396,6 +396,8 @@ router.post('/:spotId/bookings', validateBooking, requireAuth, unauthorizedSpot,
         const booking = await spot.createBooking({
             startDate, endDate, userId
         })
+        
+        res.json(booking)
     }catch(err){
         const error = new Error("Sorry, this spot is already booked for the specified dates");
         error.errors = {
@@ -407,7 +409,7 @@ router.post('/:spotId/bookings', validateBooking, requireAuth, unauthorizedSpot,
         return next(error);
     }
 
-    res.json(booking)
+    
 })
 
 module.exports = router;
