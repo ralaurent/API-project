@@ -70,6 +70,10 @@ router.put('/:bookingId', validateBooking, requireAuth, authorizeBooking, async(
 
     try{
         await booking.save()
+
+        res.json({
+            booking
+        })
     }catch(err){
         const error = new Error("Sorry, this spot is already booked for the specified dates");
         error.errors = {
@@ -80,10 +84,6 @@ router.put('/:bookingId', validateBooking, requireAuth, authorizeBooking, async(
         error.title = "Bad request.";
         return next(error);
     }
-
-    res.json({
-        booking
-    })
 })
 
 router.delete('/:bookingId', requireAuth, authorizeBookingDelete, async(req, res) => {
