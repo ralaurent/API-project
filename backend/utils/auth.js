@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { jwtConfig } = require('../config');
-const { User, Spot, Review } = require('../db/models');
+const { User, Spot, SpotImage, Review, ReviewImage, Booking } = require('../db/models');
 
 const { secret, expiresIn } = jwtConfig;
 
@@ -69,14 +69,8 @@ const requireAuth = function (req, _res, next) {
 }
 
 const authorizeSpot = async function (req, _res, next) {
-    const user = await User.findByPk(req.user.id)
-    const spots = await user.getSpots({
-        where: {
-            id: req.params.spotId
-        }
-    })
     const spot = await Spot.findByPk(req.params.spotId)
-    if (spots.length && spot.ownerId === req.user.id) return next();
+    if (spot.ownerId == req.user.id) return next();
   
     const err = new Error('Forbidden');
     err.title = 'Forbidden';
@@ -86,14 +80,8 @@ const authorizeSpot = async function (req, _res, next) {
 }
 
 const authorizeReview = async function (req, _res, next) {
-    const user = await User.findByPk(req.user.id)
-    const reviews = await user.getReviews({
-        where: {
-            id: req.params.reviewId
-        }
-    })
     const review = await Review.findByPk(req.params.reviewId)
-    if (reviews.length && review.userId === req.user.id) return next();
+    if (review.userId == req.user.id) return next();
   
     const err = new Error('Forbidden');
     err.title = 'Forbidden';
@@ -102,4 +90,73 @@ const authorizeReview = async function (req, _res, next) {
     return next(err);
 }
 
-module.exports = { setTokenCookie, restoreUser, requireAuth, authorizeSpot, authorizeReview };
+const authorizeBooking = async function (req, _res, next) {
+    const booking = await Booking.findByPk(req.params.bookingId)
+    if (booking.userId == req.user.id) return next();
+  
+    const err = new Error('Forbidden');
+    err.title = 'Forbidden';
+    err.errors = { message: 'Forbidden' };
+    err.status = 401;
+    return next(err);
+}
+
+const authorizeBookingDelete = async function (req, _res, next) {
+    const booking = await Booking.findByPk(req.params.bookingId)
+    const spot = await Spot.findByPk(booking.spotId)
+    if (booking.userId == req.user.id || spot.ownerId === req.user.id) return next();
+  
+    const err = new Error('Forbidden');
+    err.title = 'Forbidden';
+    err.errors = { message: 'Forbidden' };
+    err.status = 401;
+    return next(err);
+}
+
+const authorizeSpotImageDelete = async function (req, _res, next) {
+    const image = await SpotImage.findByPk(req.params.imageId)
+    const spot = await Spot.findByPk(image.spotId)
+    if (spot.ownerId == req.user.id) return next();
+  
+    const err = new Error('Forbidden');
+    err.title = 'Forbidden';
+    err.errors = { message: 'Forbidden' };
+    err.status = 401;
+    return next(err);
+}
+
+const authorizeReviewImageDelete = async function (req, _res, next) {
+    const image = await ReviewImage.findByPk(req.params.imageId)
+    const review = await Review.findByPk(image.reviewId)
+    if (review.ownerId == req.user.id) return next();
+  
+    const err = new Error('Forbidden');
+    err.title = 'Forbidden';
+    err.errors = { message: 'Forbidden' };
+    err.status = 401;
+    return next(err);
+}
+
+const unauthorizedSpot = async function (req, _res, next) {
+    const review = await Review.findByPk(req.params.reviewId)
+    if (!review.userId == req.user.id) return next();
+  
+    const err = new Error('Forbidden');
+    err.title = 'Forbidden';
+    err.errors = { message: 'Forbidden' };
+    err.status = 401;
+    return next(err);
+}
+
+module.exports = { 
+    setTokenCookie, 
+    restoreUser, 
+    requireAuth, 
+    authorizeSpot, 
+    unauthorizedSpot, 
+    authorizeReview, 
+    authorizeBooking,
+    authorizeBookingDelete,
+    authorizeSpotImageDelete,
+    authorizeReviewImageDelete 
+};

@@ -33,7 +33,7 @@ module.exports = {
         price: 100
       },
       {
-        ownerId: 1,
+        ownerId: 5,
         address: "456 Elm Avenue",
         city: "Sampletown",
         state: "ST",
@@ -45,7 +45,7 @@ module.exports = {
         price: 150
       },
       {
-        ownerId: 1,
+        ownerId: 2,
         address: "789 Oak Drive",
         city: "Testville",
         state: "TS",
@@ -69,7 +69,7 @@ module.exports = {
         price: 300
       },
       {
-        ownerId: 1,
+        ownerId: 4,
         address: "202 Cedar Street",
         city: "Sample City",
         state: "SC",
