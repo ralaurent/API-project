@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 
-const { setTokenCookie, requireAuth, authorizeSpot } = require('../../utils/auth');
+const { setTokenCookie, requireAuth, authorizeSpot, unauthorizedSpot } = require('../../utils/auth');
 const { User, Spot, SpotImage, Review, ReviewImage, sequelize } = require('../../db/models');
 
 const router = express.Router();
@@ -84,22 +84,22 @@ const validateFilters = [
     query('minLat')
       .exists({ checkFalsy: true })
       .notEmpty()
-      .isNumeric()
+      .isInt({ min: -90 })
       .withMessage('Maximum latitude is invalid'),
     query('maxLat')
       .exists({ checkFalsy: true })
       .notEmpty()
-      .isNumeric()
+      .isInt({ max: 90 })
       .withMessage('Minimum latitude is invalid'),
     query('minLng')
       .exists({ checkFalsy: true })
       .notEmpty()
-      .isNumeric()
+      .isInt({ min: -180 })
       .withMessage('Maximum longitude is invalid'),
     query('maxLng')
       .exists({ checkFalsy: true })
       .notEmpty()
-      .isNumeric()
+      .isInt({ max: 180 })
       .withMessage('Minimum longitude is invalid'),
     query('minPrice')
       .exists({ checkFalsy: true })
@@ -249,12 +249,6 @@ router.post('/', requireAuth, validateSpot, async(req, res) => {
 router.post('/:spotId/images', requireAuth, authorizeSpot, async (req, res) => {
     const spot = await Spot.findByPk(req.params.spotId)
 
-    if(!spot){
-        return res.status(404).json({
-            "message": "Spot couldn't be found"
-        })
-    }
-
     const { url, preview } = req.body
 
     const newSpot = await spot.createSpotImage({
@@ -272,13 +266,7 @@ router.put('/:spotId', requireAuth, authorizeSpot, validateSpot, async (req, res
     const { address, city, state, country, lat, lng, name, description, price } = req.body
 
     const spot = await Spot.findByPk(req.params.spotId)
-
-    if(!spot){
-        return res.status(404).json({
-            "message": "Spot couldn't be found"
-        })
-    }
-
+    
     spot.address = address || spot.address
     spot.city = city || spot.city
     spot.state = state || spot.state
@@ -296,12 +284,6 @@ router.put('/:spotId', requireAuth, authorizeSpot, validateSpot, async (req, res
 
 router.delete('/:spotId', requireAuth, authorizeSpot, async(req, res) => {
     const spot = await Spot.findByPk(req.params.spotId)
-
-    if(!spot){
-        return res.status(404).json({
-            "message": "Spot couldn't be found"
-        })
-    }
 
     await spot.destroy()
 
@@ -402,14 +384,8 @@ router.get('/:spotId/bookings', requireAuth, async(req, res) => {
 
 })
 
-router.post('/:spotId/bookings', requireAuth, validateBooking, async(req, res, next) => {
+router.post('/:spotId/bookings', requireAuth, unauthorizedSpot, validateBooking, async(req, res, next) => {
     const spot = await Spot.findByPk(req.params.spotId)
-
-    if(!spot){
-        return res.status(404).json({
-            "message": "Spot couldn't be found"
-        })
-    }
 
     const { startDate, endDate } = req.body
     const userId = req.user.id

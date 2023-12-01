@@ -69,12 +69,6 @@ router.get('/current', async(req, res) => {
 router.post('/:reviewId/images', requireAuth, authorizeReview, async(req, res) => {
     const review = await Review.findByPk(req.params.reviewId)
 
-    if(!review){
-        return res.status(404).json({
-            "message": "Review couldn't be found"
-        })
-    }
-
     const { url } = req.body
 
     const count = await review.getReviewImages()
@@ -98,12 +92,6 @@ router.post('/:reviewId/images', requireAuth, authorizeReview, async(req, res) =
 router.put('/:reviewId', requireAuth, authorizeReview, validateReview, async(req, res) => {
     const reviews = await Review.findByPk(req.params.reviewId)
 
-    if(!reviews){
-        return res.status(404).json({
-            "message": "Review couldn't be found"
-        })
-    }
-
     const { review, stars } = req.body
 
     reviews.review = review || reviews.review
@@ -116,12 +104,6 @@ router.put('/:reviewId', requireAuth, authorizeReview, validateReview, async(req
 
 router.delete('/:reviewId', requireAuth, authorizeReview, async(req, res) => {
     const review = await Review.findByPk(req.params.reviewId)
-
-    if(!review){
-        return res.status(404).json({
-            "message": "Review couldn't be found"
-        })
-    }
 
     await review.destroy()
 

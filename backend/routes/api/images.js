@@ -13,12 +13,6 @@ const { handleValidationErrors, handleBookingValidationErrors } = require('../..
 router.delete('/spot-images/:imageId', requireAuth, authorizeSpotImageDelete, async(req, res) => {
     const image = await SpotImage.findByPk(req.params.imageId)
 
-    if(!image){
-        return res.status(404).json({
-            "message": "Spot Image couldn't be found"
-        })
-    }
-
     await image.destroy()
 
     res.json({
@@ -28,12 +22,6 @@ router.delete('/spot-images/:imageId', requireAuth, authorizeSpotImageDelete, as
 
 router.delete('/review-images/:imageId', requireAuth, authorizeReviewImageDelete, async(req, res) => {
     const image = await ReviewImage.findByPk(req.params.imageId)
-
-    if(!image){
-        return res.status(404).json({
-            "message": "Review Image couldn't be found"
-        })
-    }
 
     await image.destroy()
 

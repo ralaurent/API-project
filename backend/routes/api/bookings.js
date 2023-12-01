@@ -57,12 +57,6 @@ router.get('/current', requireAuth, async(req, res) => {
 router.put('/:bookingId', requireAuth, authorizeBooking, validateBooking, async(req, res, next) => {
     const booking = await Booking.findByPk(req.params.bookingId)
 
-    if(!booking){
-        return res.status(404).json({
-            "message": "Booking couldn't be found"
-        })
-    }
-
     const { startDate, endDate } = req.body
 
     if(booking.endDate < new Date().toJSON().slice(0, 10)){
@@ -94,12 +88,6 @@ router.put('/:bookingId', requireAuth, authorizeBooking, validateBooking, async(
 
 router.delete('/:bookingId', requireAuth, authorizeBookingDelete, async(req, res) => {
     const booking = await Booking.findByPk(req.params.bookingId)
-
-    if(!booking){
-        return res.status(404).json({
-            "message": "Booking couldn't be found"
-        })
-    }
 
     const today = new Date()
     if(booking.startDate < today /*&& today > booking.endDate*/){

@@ -70,7 +70,32 @@ const requireAuth = function (req, _res, next) {
 
 const authorizeSpot = async function (req, _res, next) {
     const spot = await Spot.findByPk(req.params.spotId)
+
+    if(!spot){
+        return _res.status(404).json({
+            "message": "Spot couldn't be found"
+        })
+    }
+
     if (spot.ownerId == req.user.id) return next();
+  
+    const err = new Error('Forbidden');
+    err.title = 'Forbidden';
+    err.errors = { message: 'Forbidden' };
+    err.status = 401;
+    return next(err);
+}
+
+const unauthorizedSpot = async function (req, _res, next) {
+    const spot = await Spot.findByPk(req.params.spotId)
+
+    if(!spot){
+        return _res.status(404).json({
+            "message": "Spot couldn't be found"
+        })
+    }
+
+    if (!spot.userId == req.user.id) return next();
   
     const err = new Error('Forbidden');
     err.title = 'Forbidden';
@@ -81,6 +106,13 @@ const authorizeSpot = async function (req, _res, next) {
 
 const authorizeReview = async function (req, _res, next) {
     const review = await Review.findByPk(req.params.reviewId)
+
+    if(!review){
+        return _res.status(404).json({
+            "message": "Review couldn't be found"
+        })
+    }
+
     if (review.userId == req.user.id) return next();
   
     const err = new Error('Forbidden');
@@ -92,6 +124,13 @@ const authorizeReview = async function (req, _res, next) {
 
 const authorizeBooking = async function (req, _res, next) {
     const booking = await Booking.findByPk(req.params.bookingId)
+
+    if(!booking){
+        return _res.status(404).json({
+            "message": "Booking couldn't be found"
+        })
+    }
+
     if (booking.userId == req.user.id) return next();
   
     const err = new Error('Forbidden');
@@ -103,6 +142,13 @@ const authorizeBooking = async function (req, _res, next) {
 
 const authorizeBookingDelete = async function (req, _res, next) {
     const booking = await Booking.findByPk(req.params.bookingId)
+
+    if(!booking){
+        return _res.status(404).json({
+            "message": "Booking couldn't be found"
+        })
+    }
+
     const spot = await Spot.findByPk(booking.spotId)
     if (booking.userId == req.user.id || spot.ownerId === req.user.id) return next();
   
@@ -115,6 +161,13 @@ const authorizeBookingDelete = async function (req, _res, next) {
 
 const authorizeSpotImageDelete = async function (req, _res, next) {
     const image = await SpotImage.findByPk(req.params.imageId)
+
+    if(!image){
+        return _res.status(404).json({
+            "message": "Spot Image couldn't be found"
+        })
+    }
+
     const spot = await Spot.findByPk(image.spotId)
     if (spot.ownerId == req.user.id) return next();
   
@@ -127,19 +180,15 @@ const authorizeSpotImageDelete = async function (req, _res, next) {
 
 const authorizeReviewImageDelete = async function (req, _res, next) {
     const image = await ReviewImage.findByPk(req.params.imageId)
+
+    if(!image){
+        return _res.status(404).json({
+            "message": "Review Image couldn't be found"
+        })
+    }
+
     const review = await Review.findByPk(image.reviewId)
     if (review.ownerId == req.user.id) return next();
-  
-    const err = new Error('Forbidden');
-    err.title = 'Forbidden';
-    err.errors = { message: 'Forbidden' };
-    err.status = 401;
-    return next(err);
-}
-
-const unauthorizedSpot = async function (req, _res, next) {
-    const review = await Review.findByPk(req.params.reviewId)
-    if (!review.userId == req.user.id) return next();
   
     const err = new Error('Forbidden');
     err.title = 'Forbidden';
