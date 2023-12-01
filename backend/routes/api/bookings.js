@@ -58,8 +58,8 @@ router.put('/:bookingId', validateBooking, requireAuth, authorizeBooking, async(
     const booking = await Booking.findByPk(req.params.bookingId)
 
     const { startDate, endDate } = req.body
-
-    if(booking.endDate < new Date().toJSON().slice(0, 10)){
+    
+    if(booking.endDate < new Date()){
         return res.status(403).json({
             "message": "Past bookings can't be modified"
         })
