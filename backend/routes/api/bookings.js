@@ -1,5 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const { Op } = require('sequelize');
 
 const { setTokenCookie, requireAuth, authorizeReview, authorizeBooking, authorizeBookingDelete } = require('../../utils/auth');
 const { User, Spot, SpotImage, Review, ReviewImage, Booking, sequelize } = require('../../db/models');
@@ -54,10 +55,12 @@ router.get('/current', requireAuth, async(req, res) => {
     })
 })
 
-router.put('/:bookingId', validateBooking, requireAuth, authorizeBooking, async(req, res, next) => {
+router.put('/:bookingId', requireAuth, authorizeBooking, validateBooking, async(req, res, next) => {
     const booking = await Booking.findByPk(req.params.bookingId)
 
-    const { startDate, endDate } = req.body
+    let { startDate, endDate } = req.body
+    startDate = new Date(startDate)
+    endDate = new Date(endDate)
     
     if(booking.endDate < new Date()){
         return res.status(403).json({
@@ -68,13 +71,50 @@ router.put('/:bookingId', validateBooking, requireAuth, authorizeBooking, async(
     booking.startDate = startDate || booking.startDate
     booking.endDate = endDate || booking.endDatex
 
-    try{
+    const conflict = await Booking.findAll({
+        where: {
+            spotId: booking.spotId,
+            id: {
+                [Op.not]: req.params.bookingId
+            },
+            [Op.or]: [
+              {
+                startDate: {
+                  [Op.gte]: startDate
+                },
+                endDate: {
+                  [Op.lte]: endDate
+                }
+              },
+              {
+                startDate: {
+                  [Op.lte]: startDate
+                },
+                endDate: {
+                  [Op.gte]: endDate
+                }
+              },
+              {
+                endDate: {
+                  [Op.between]: [startDate, endDate]
+                }
+              },
+              {
+                startDate: {
+                  [Op.between]: [startDate, endDate]
+                }
+              },
+            ]
+        }
+    })
+
+    console.log(conflict)
+
+    if(!conflict.length){
         await booking.save()
 
-        res.json({
-            booking
-        })
-    }catch(err){
+        return res.json(booking)
+    }
         const error = new Error("Sorry, this spot is already booked for the specified dates");
         error.errors = {
             startDate: "Start date conflicts with an existing booking",
@@ -83,7 +123,6 @@ router.put('/:bookingId', validateBooking, requireAuth, authorizeBooking, async(
         error.status = 403;
         error.title = "Bad request.";
         return next(error);
-    }
 })
 
 router.delete('/:bookingId', requireAuth, authorizeBookingDelete, async(req, res) => {

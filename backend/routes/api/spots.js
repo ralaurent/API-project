@@ -1,8 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const { Op } = require('sequelize');
 
 const { setTokenCookie, requireAuth, authorizeSpot, unauthorizedSpot } = require('../../utils/auth');
-const { User, Spot, SpotImage, Review, ReviewImage, sequelize } = require('../../db/models');
+const { User, Spot, SpotImage, Review, ReviewImage, Booking, sequelize } = require('../../db/models');
 
 const router = express.Router();
 
@@ -29,12 +30,12 @@ const validateSpot = [
     check('lat')
       .exists({ checkFalsy: true })
       .notEmpty()
-      .isNumeric()
+      .isFloat({ min: -90, max: 90 })
       .withMessage('Latitude is not valid'),
     check('lng')
       .exists({ checkFalsy: true })
       .notEmpty()
-      .isNumeric()
+      .isFloat({ min: -180, max: 180 })
       .withMessage('Longitude is not valid'),
     check('name')
       .exists({ checkFalsy: true })
@@ -48,6 +49,7 @@ const validateSpot = [
     check('price')
       .exists({ checkFalsy: true })
       .notEmpty()
+      .isFloat({ min: 0 })
       .withMessage('Price per day is required'),
     handleValidationErrors
   ];
@@ -72,50 +74,45 @@ const validateBooking = [
 
 const validateFilters = [
     query('page')
-      .exists({ checkFalsy: true })
-      .notEmpty()
+      .optional({ checkFalsy: true })
       .isInt({ min: 1, max: 10 })
       .withMessage('Page must be greater than or equal to 1'),
     query('size')
-      .exists({ checkFalsy: true })
-      .notEmpty()
+      .optional({ checkFalsy: true })
       .isInt({ min: 1, max: 20 })
       .withMessage('Size must be greater than or equal to 1'),
     query('minLat')
-      .exists({ checkFalsy: true })
-      .notEmpty()
-      .isInt({ min: -90 })
+      .optional({ checkFalsy: true })
+      .isFloat({ min: -90 })
       .withMessage('Maximum latitude is invalid'),
     query('maxLat')
-      .exists({ checkFalsy: true })
-      .notEmpty()
-      .isInt({ max: 90 })
+      .optional({ checkFalsy: true })
+      .isFloat({ max: 90 })
       .withMessage('Minimum latitude is invalid'),
     query('minLng')
-      .exists({ checkFalsy: true })
-      .notEmpty()
-      .isInt({ min: -180 })
+      .optional({ checkFalsy: true })
+      .isFloat({ min: -180 })
       .withMessage('Maximum longitude is invalid'),
     query('maxLng')
-      .exists({ checkFalsy: true })
-      .notEmpty()
-      .isInt({ max: 180 })
+      .optional({ checkFalsy: true })
+      .isFloat({ max: 180 })
       .withMessage('Minimum longitude is invalid'),
     query('minPrice')
-      .exists({ checkFalsy: true })
-      .notEmpty()
-      .isInt({ min: 0 })
+      .optional({ checkFalsy: true })
+      .isFloat({ min: 0 })
       .withMessage('Minimum price must be greater than or equal to 0'),
     query('maxPrice')
-      .exists({ checkFalsy: true })
-      .notEmpty()
-      .isInt({ min: 0 })
+      .optional({ checkFalsy: true })
+      .isFloat({ min: 0 })
       .withMessage('Maximum price must be greater than or equal to 0'),
     handleValidationErrors
   ];
 
 router.get('/', validateFilters, async(req, res) => {
-    const { page, size } = req.query
+    let { page, size } = req.query
+
+    if(page == undefined) page = 1
+    if(size == undefined) size = 20
 
     const pagination = {
         limit: size,
@@ -157,7 +154,7 @@ router.get('/', validateFilters, async(req, res) => {
             price: spot.price,
             createdAt: spot.createdAt,
             updatedAt: spot.updatedAt,
-            avgRating: totalStars / stars.length,
+            avgRating: stars.length > 0 ? totalStars / stars.length : 0,
             previewImage: image[0]?.url,
       });
     }
@@ -204,7 +201,7 @@ router.get('/current', requireAuth, async(req, res) => {
             price: spot.price,
             createdAt: spot.createdAt,
             updatedAt: spot.updatedAt,
-            avgRating: totalStars / stars.length,
+            avgRating: stars.length > 0 ? totalStars / stars.length : 0,
             previewImage: image[0]?.url,
       });
     }
@@ -233,10 +230,23 @@ router.get('/:spotId', async(req, res) => {
         })
     }
 
-    res.json(spot)
+    const spotDets = spot.toJSON()
+
+    const stars = await spot.getReviews({
+        attributes: ['stars']
+    })
+
+    const totalStars = stars.reduce((sum, item) => {
+        return sum + item.stars;
+    }, 0)
+
+    spotDets.numReviews = stars.length
+    spotDets.avgRating = stars.length > 0 ? totalStars / stars.length : 0
+
+    res.json(spotDets)
 })
 
-router.post('/', validateSpot, requireAuth,  async(req, res) => {
+router.post('/', requireAuth, validateSpot, async(req, res) => {
     const { address, city, state, country, lat, lng, name, description, price } = req.body
 
     const ownerId = req.user.id
@@ -264,7 +274,7 @@ router.post('/:spotId/images', requireAuth, authorizeSpot, async (req, res) => {
     })
 })
 
-router.put('/:spotId', validateSpot, requireAuth, authorizeSpot, async (req, res) => {
+router.put('/:spotId', requireAuth, authorizeSpot,  validateSpot, async (req, res) => {
     const { address, city, state, country, lat, lng, name, description, price } = req.body
 
     const spot = await Spot.findByPk(req.params.spotId)
@@ -321,7 +331,7 @@ router.get('/:spotId/reviews', async(req, res) => {
     })
 })
 
-router.post('/:spotId/reviews', validateReview, requireAuth, async(req, res) => {
+router.post('/:spotId/reviews', requireAuth, validateReview, async(req, res) => {
     const userId = req.user.id
 
     const spot = await Spot.findByPk(req.params.spotId)
@@ -386,19 +396,55 @@ router.get('/:spotId/bookings', requireAuth, async(req, res) => {
 
 })
 
-router.post('/:spotId/bookings', validateBooking, requireAuth, unauthorizedSpot, async(req, res, next) => {
+router.post('/:spotId/bookings', requireAuth, unauthorizedSpot, validateBooking, async(req, res, next) => {
     const spot = await Spot.findByPk(req.params.spotId)
 
-    const { startDate, endDate } = req.body
+    let { startDate, endDate } = req.body
+    startDate = new Date(startDate)
+    endDate = new Date(endDate)
     const userId = req.user.id
 
-    try{
+    const conflict = await Booking.findAll({
+        where: {
+            spotId: spot.id,
+            [Op.or]: [
+              {
+                startDate: {
+                  [Op.gte]: startDate
+                },
+                endDate: {
+                  [Op.lte]: endDate
+                }
+              },
+              {
+                startDate: {
+                  [Op.lte]: startDate
+                },
+                endDate: {
+                  [Op.gte]: endDate
+                }
+              },
+              {
+                endDate: {
+                  [Op.between]: [startDate, endDate]
+                }
+              },
+              {
+                startDate: {
+                  [Op.between]: [startDate, endDate]
+                }
+              },
+            ]
+        }
+    })
+
+    if(!conflict.length){
         const booking = await spot.createBooking({
             startDate, endDate, userId
         })
 
-        res.json(booking)
-    }catch(err){
+        return res.json(booking)
+    }
         const error = new Error("Sorry, this spot is already booked for the specified dates");
         error.errors = {
             startDate: "Start date conflicts with an existing booking",
@@ -407,7 +453,6 @@ router.post('/:spotId/bookings', validateBooking, requireAuth, unauthorizedSpot,
         error.status = 403;
         error.title = "Bad request.";
         return next(error);
-    }
 })
 
 module.exports = router;

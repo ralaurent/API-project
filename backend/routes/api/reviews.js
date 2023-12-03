@@ -20,7 +20,7 @@ const validateReview = [
     handleValidationErrors
   ];
 
-router.get('/current', async(req, res) => {
+router.get('/current', requireAuth, async(req, res) => {
     const Reviews = await Review.findAll({
         where: {
             userId: req.user.id
@@ -89,7 +89,7 @@ router.post('/:reviewId/images', requireAuth, authorizeReview, async(req, res) =
     })
 })
 
-router.put('/:reviewId', validateReview, requireAuth, authorizeReview, async(req, res) => {
+router.put('/:reviewId', requireAuth, authorizeReview,  validateReview,  async(req, res) => {
     const reviews = await Review.findByPk(req.params.reviewId)
 
     const { review, stars } = req.body

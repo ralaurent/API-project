@@ -95,7 +95,7 @@ const unauthorizedSpot = async function (req, _res, next) {
         })
     }
 
-    if (!spot.userId == req.user.id) return next();
+    if (spot.ownerId !== req.user.id) return next();
   
     const err = new Error('Forbidden');
     err.title = 'Forbidden';
@@ -188,7 +188,7 @@ const authorizeReviewImageDelete = async function (req, _res, next) {
     }
 
     const review = await Review.findByPk(image.reviewId)
-    if (review.ownerId == req.user.id) return next();
+    if (review.userId == req.user.id) return next();
   
     const err = new Error('Forbidden');
     err.title = 'Forbidden';
@@ -207,5 +207,5 @@ module.exports = {
     authorizeBooking,
     authorizeBookingDelete,
     authorizeSpotImageDelete,
-    authorizeReviewImageDelete 
+    authorizeReviewImageDelete,
 };
