@@ -83,19 +83,19 @@ const validateFilters = [
       .withMessage('Size must be greater than or equal to 1'),
     query('minLat')
       .optional({ checkFalsy: true })
-      .isFloat({ min: -90 })
+      .isFloat({ min: -90, max: 90 })
       .withMessage('Minimum latitude is invalid'),
     query('maxLat')
       .optional({ checkFalsy: true })
-      .isFloat({ max: 90 })
+      .isFloat({ min: -90, max: 90 })
       .withMessage('Maximum latitude is invalid'),
     query('minLng')
       .optional({ checkFalsy: true })
-      .isFloat({ min: -180 })
+      .isFloat({ min: -180, max: 180 })
       .withMessage('Minimum longitude is invalid'),
     query('maxLng')
       .optional({ checkFalsy: true })
-      .isFloat({ max: 180 })
+      .isFloat({ min: -180, max: 180 })
       .withMessage('Maximum longitude is invalid'),
     query('minPrice')
       .optional({ checkFalsy: true })
