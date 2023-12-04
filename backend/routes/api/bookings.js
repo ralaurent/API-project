@@ -44,7 +44,7 @@ router.get('/current', requireAuth, async(req, res) => {
 
         updatedBooking.Spot = {
             ...updatedBooking.Spot,
-            previewImage: previewImage?.url
+            previewImage: previewImage?.url || "No preview image available"
         }
 
         updatedBookings.push(updatedBooking)
@@ -108,7 +108,16 @@ router.put('/:bookingId', requireAuth, authorizeBooking, validateBooking, async(
         }
     })
 
-    console.log(conflict)
+    const errors = {}
+
+    if (conflict.some((booking) => (booking.startDate <= startDate && endDate <= booking.endDate) || (booking.startDate >= startDate && endDate >= booking.endDate))) {
+        errors.startDate = "Start date conflicts with an existing booking"
+        errors.endDate = "End date conflicts with an existing booking"
+    }else if (conflict.some((booking) => booking.startDate <= startDate && startDate <= booking.endDate)) {
+        errors.startDate = "Start date conflicts with an existing booking"
+    } else if (conflict.some((booking) => booking.startDate <= endDate && endDate <= booking.endDate)) {
+        errors.endDate = "End date conflicts with an existing booking"
+    }
 
     if(!conflict.length){
         await booking.save()
@@ -116,10 +125,7 @@ router.put('/:bookingId', requireAuth, authorizeBooking, validateBooking, async(
         return res.json(booking)
     }
         const error = new Error("Sorry, this spot is already booked for the specified dates");
-        error.errors = {
-            startDate: "Start date conflicts with an existing booking",
-            endDate: "End date conflicts with an existing booking"
-        };
+        error.errors = errors
         error.status = 403;
         error.title = "Bad request.";
         return next(error);

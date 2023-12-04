@@ -55,7 +55,7 @@ router.get('/current', requireAuth, async(req, res) => {
 
         updatedReview.Spot = {
             ...updatedReview.Spot,
-            previewImage: previewImage?.url
+            previewImage: previewImage?.url || "No preview image available"
         }
 
         updatedReviews.push(updatedReview)

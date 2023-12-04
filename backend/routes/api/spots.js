@@ -84,19 +84,19 @@ const validateFilters = [
     query('minLat')
       .optional({ checkFalsy: true })
       .isFloat({ min: -90 })
-      .withMessage('Maximum latitude is invalid'),
+      .withMessage('Minimum latitude is invalid'),
     query('maxLat')
       .optional({ checkFalsy: true })
       .isFloat({ max: 90 })
-      .withMessage('Minimum latitude is invalid'),
+      .withMessage('Maximum latitude is invalid'),
     query('minLng')
       .optional({ checkFalsy: true })
       .isFloat({ min: -180 })
-      .withMessage('Maximum longitude is invalid'),
+      .withMessage('Minimum longitude is invalid'),
     query('maxLng')
       .optional({ checkFalsy: true })
       .isFloat({ max: 180 })
-      .withMessage('Minimum longitude is invalid'),
+      .withMessage('Maximum longitude is invalid'),
     query('minPrice')
       .optional({ checkFalsy: true })
       .isFloat({ min: 0 })
@@ -109,10 +109,54 @@ const validateFilters = [
   ];
 
 router.get('/', validateFilters, async(req, res) => {
-    let { page, size } = req.query
+    let { page, size, minLat, maxLat, minLng, maxLng, minPrice, maxPrice } = req.query
 
     if(page == undefined) page = 1
     if(size == undefined) size = 20
+
+    const where = {}
+
+    if (minLat !== undefined && maxLat !== undefined) {
+        where.lat = {
+          [Op.between]: [minLat, maxLat]
+        }
+      } else if (minLat !== undefined) {
+        where.lat = {
+          [Op.gte]: minLat
+        }
+      } else if (maxLat !== undefined) {
+        where.lat = {
+          [Op.lte]: maxLat
+        }
+      }
+      
+    if (minLng !== undefined && maxLng !== undefined) {
+        where.lng = {
+          [Op.between]: [minLng, maxLng]
+        }
+      } else if (minLng !== undefined) {
+        where.lng = {
+          [Op.gte]: minLng
+        }
+      } else if (maxLng !== undefined) {
+        where.lng = {
+          [Op.lte]: maxLng
+        }
+      }
+      
+    if (minPrice !== undefined && maxPrice !== undefined) {
+        where.price = {
+          [Op.between]: [minPrice, maxPrice]
+        }
+      } else if (minPrice !== undefined) {
+        where.price = {
+          [Op.gte]: minPrice
+        }
+      } else if (maxPrice !== undefined) {
+        where.price = {
+          [Op.lte]: maxPrice
+        }
+      }
 
     const pagination = {
         limit: size,
@@ -120,6 +164,7 @@ router.get('/', validateFilters, async(req, res) => {
     }
 
     const Spots = await Spot.findAll({
+        where,
         ...pagination
     })
 
@@ -134,7 +179,7 @@ router.get('/', validateFilters, async(req, res) => {
           }, 0)
 
         const image = await spot.getSpotImages({
-            where: { 
+            where:{
                 preview: true
             },
             attributes: ['url']
@@ -155,7 +200,7 @@ router.get('/', validateFilters, async(req, res) => {
             createdAt: spot.createdAt,
             updatedAt: spot.updatedAt,
             avgRating: stars.length > 0 ? totalStars / stars.length : 0,
-            previewImage: image[0]?.url,
+            previewImage: image[0]?.url || "No preview image available",
       });
     }
 
@@ -202,7 +247,7 @@ router.get('/current', requireAuth, async(req, res) => {
             createdAt: spot.createdAt,
             updatedAt: spot.updatedAt,
             avgRating: stars.length > 0 ? totalStars / stars.length : 0,
-            previewImage: image[0]?.url,
+            previewImage: image[0]?.url || "No preview image available",
       });
     }
 
@@ -438,6 +483,17 @@ router.post('/:spotId/bookings', requireAuth, unauthorizedSpot, validateBooking,
         }
     })
 
+    const errors = {}
+
+    if (conflict.some((booking) => (booking.startDate <= startDate && endDate <= booking.endDate) || (booking.startDate >= startDate && endDate >= booking.endDate))) {
+        errors.startDate = "Start date conflicts with an existing booking"
+        errors.endDate = "End date conflicts with an existing booking";
+    }else if (conflict.some((booking) => booking.startDate <= startDate && startDate <= booking.endDate)) {
+        errors.startDate = "Start date conflicts with an existing booking"
+    } else if (conflict.some((booking) => booking.startDate <= endDate && endDate <= booking.endDate)) {
+        errors.endDate = "End date conflicts with an existing booking"
+    }
+
     if(!conflict.length){
         const booking = await spot.createBooking({
             startDate, endDate, userId
@@ -446,10 +502,7 @@ router.post('/:spotId/bookings', requireAuth, unauthorizedSpot, validateBooking,
         return res.json(booking)
     }
         const error = new Error("Sorry, this spot is already booked for the specified dates");
-        error.errors = {
-            startDate: "Start date conflicts with an existing booking",
-            endDate: "End date conflicts with an existing booking"
-        };
+        error.errors = errors;
         error.status = 403;
         error.title = "Bad request.";
         return next(error);
