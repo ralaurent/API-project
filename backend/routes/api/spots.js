@@ -206,8 +206,8 @@ router.get('/', validateFilters, async(req, res) => {
 
     res.json({
         Spots: updatedSpots,
-        page,
-        size
+        page: Number(page),
+        size: Number(size)
     })
 })
 
