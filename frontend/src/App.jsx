@@ -4,6 +4,12 @@ import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import * as sessionActions from './store/session';
 
+import Spots from './components/pages/Spots'
+import SingleSpot from './components/pages/SingleSpot'
+import CurrentSpot from './components/pages/CurrentSpot'
+import NewSpot from './components/pages/NewSpot'
+import EditSpot from './components/pages/EditSpot'
+
 function Layout() {
   const dispatch = useDispatch();
   const [isLoaded, setIsLoaded] = useState(false);
@@ -28,23 +34,23 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/',
-        element: <h1>All Spots</h1>
+        element: <Spots/>
       },
       {
         path: '/spots/:id',
-        element: <h1>Single Spot</h1>
+        element: <SingleSpot/> 
       },
       {
         path: '/spots/new',
-        element: <h1>Create New Spot</h1>
+        element: <NewSpot/>
       },
       {
         path: '/spots/current',
-        element: <h1>Manage Spots</h1>
+        element: <CurrentSpot/>
       },
       {
         path: '/spots/:id/edit',
-        element: <h1>Update Single Spot</h1>
+        element: <EditSpot/>
       }
     ]
   }
