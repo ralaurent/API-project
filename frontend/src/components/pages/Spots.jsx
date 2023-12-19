@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { useDispatch, useSelector } from 'react-redux';
 import * as spotActions from '../../store/spots'
 import './pages.css';

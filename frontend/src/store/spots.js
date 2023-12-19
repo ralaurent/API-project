@@ -1,3 +1,4 @@
+import { csrfFetch } from "../store/csrf";
 /** Action Type Constants: */
 export const LOAD_SPOTS = 'spots/LOAD_SPOTS';
 export const CREATE_SPOT = 'spots/CREATE_SPOT';
@@ -27,40 +28,34 @@ export const removeSpot = (spotId) => ({
 
 /** Thunk Action Creators: */
 export const getSpots = () => async dispatch => {
-    const response = await fetch('/api/spots')
+    const response = await csrfFetch('/api/spots')
   
     if(response.ok){
       const spots = await response.json()
       dispatch(loadSpots(spots))
-    }else{
-  
     }
 }
 
 export const getSpotsById = () => async dispatch => {
-    const response = await fetch('/api/spots')
+    const response = await csrfFetch('/api/spots')
   
     if(response.ok){
       const spots = await response.json()
       dispatch(loadSpots(spots))
-    }else{
-  
     }
 }
 
 export const getCurrentSpots = () => async dispatch => {
-    const response = await fetch('/api/spots/current')
+    const response = await csrfFetch('/api/spots/current')
   
     if(response.ok){
       const spots = await response.json()
       dispatch(loadSpots(spots))
-    }else{
-  
     }
 }
 
 export const addSpot = (spot) => async dispatch => {
-    const response = await fetch(`/api/spots`, {
+    const response = await csrfFetch(`/api/spots`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -71,24 +66,20 @@ export const addSpot = (spot) => async dispatch => {
     if(response.ok){
         const spot = await response.json()
         dispatch(createSpot(spot))
-    }else{
-  
     }
 }
 
 export const updateSpot = (spotId) => async dispatch => {
-    const response = await fetch(`/api/spots/${spotId}`)
+    const response = await csrfFetch(`/api/spots/${spotId}`)
   
     if(response.ok){
         const spot = await response.json()
         dispatch(editSpot(spot))
-    }else{
-  
     }
 }
 
 export const deleteSpot = (spotId) => async dispatch => {
-    const response = await fetch(`/api/spots/${spotId}`, {
+    const response = await csrfFetch(`/api/spots/${spotId}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json"
@@ -97,8 +88,6 @@ export const deleteSpot = (spotId) => async dispatch => {
   
     if(response.ok){
         dispatch(removeSpot(spotId))
-    }else{
-  
     }
 }
 
