@@ -51,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: '/spots/:id/edit',
         element: <EditSpot/>
+      },
+      {
+        path: '*',
+        element: <h1>404</h1>
       }
     ]
   }
