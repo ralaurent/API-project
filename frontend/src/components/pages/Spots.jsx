@@ -9,10 +9,10 @@ function Spots(){
 
     console.log("Normalized data: ", spots)
 
-    spots = Object.keys(spots).map(key => {
-        return spots[key];
-      })
-      
+    spots = Object.values(spots)
+
+    console.log("Array data: ", spots)
+
     useEffect(() => {
         dispatch(spotActions.getSpots())
     }, [])
@@ -20,7 +20,7 @@ function Spots(){
 
     return(
         <div className="spots-body">
-
+            <div className="inner"></div>
         </div>
     )
 

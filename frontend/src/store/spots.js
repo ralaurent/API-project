@@ -1,11 +1,10 @@
 import { csrfFetch } from "../store/csrf";
-/** Action Type Constants: */
+
 export const LOAD_SPOTS = 'spots/LOAD_SPOTS';
 export const CREATE_SPOT = 'spots/CREATE_SPOT';
 export const UPDATE_SPOT = 'spots/UPDATE_SPOT';
 export const REMOVE_SPOT = 'spots/REMOVE_SPOT';
 
-/**  Action Creators: */
 export const loadSpots = (spots) => ({
   type: LOAD_SPOTS,
   spots
@@ -26,13 +25,14 @@ export const removeSpot = (spotId) => ({
   spotId
 });
 
-/** Thunk Action Creators: */
 export const getSpots = () => async dispatch => {
     const response = await csrfFetch('/api/spots')
   
     if(response.ok){
       const spots = await response.json()
       dispatch(loadSpots(spots))
+    }else{
+
     }
 }
 
@@ -42,6 +42,8 @@ export const getSpotsById = () => async dispatch => {
     if(response.ok){
       const spots = await response.json()
       dispatch(loadSpots(spots))
+    }else{
+
     }
 }
 
@@ -51,10 +53,12 @@ export const getCurrentSpots = () => async dispatch => {
     if(response.ok){
       const spots = await response.json()
       dispatch(loadSpots(spots))
+    }else{
+
     }
 }
 
-export const addSpot = (spot) => async dispatch => {
+export const addSpot = (spot, images) => async dispatch => {
     const response = await csrfFetch(`/api/spots`, {
         method: "POST",
         headers: {
@@ -65,7 +69,22 @@ export const addSpot = (spot) => async dispatch => {
   
     if(response.ok){
         const spot = await response.json()
-        dispatch(createSpot(spot))
+
+        const response = await csrfFetch(`/api/spots/${spot.id}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(images)
+        })
+
+        if(response.ok){
+            // dispatch(createSpot(spot))
+        }else{
+
+        }
+    }else{
+
     }
 }
 
@@ -75,6 +94,8 @@ export const updateSpot = (spotId) => async dispatch => {
     if(response.ok){
         const spot = await response.json()
         dispatch(editSpot(spot))
+    }else{
+
     }
 }
 
@@ -88,12 +109,11 @@ export const deleteSpot = (spotId) => async dispatch => {
   
     if(response.ok){
         dispatch(removeSpot(spotId))
+    }else{
+
     }
 }
 
-/** Selectors: */
-
-/** Reducer: */
 const spotsReducer = (state = {}, action) => {
   switch (action.type) {
     case LOAD_SPOTS: {
