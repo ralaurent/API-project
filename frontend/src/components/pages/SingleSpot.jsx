@@ -33,11 +33,11 @@ function SingleSpot(){
         if(!spot?.SpotImages) return
         const spotImages = Object.values(spot.SpotImages)
         
-        const preview = spotImages.find((spot) => spot.preview === true)
+        const preview = spotImages.find((spot) => spot?.preview === true)
         const images = spotImages
-        .filter((spot) => spot.preview === false)
-        .map((image) => image.url)
-        setPreviewImage(preview.url)
+        .filter((spot) => spot?.preview === false)
+        .map((image) => image?.url)
+        setPreviewImage(preview?.url)
         setImages(images)
     }, [spot])
 
