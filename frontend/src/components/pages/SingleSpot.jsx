@@ -9,12 +9,21 @@ function SingleSpot(){
     const dispatch = useDispatch()
     const { spotId } = useParams()
     let spot = useSelector(state => state.spots)
-    const [previewImage, setPreviewImage] = useState("")
-    const [images, setImages] = useState("")
+    // const [previewImage, setPreviewImage] = useState("")
+    // const [images, setImages] = useState("")
     const [showMenu, setShowMenu] = useState(false)
     const navigate = useNavigate()
 
     spot = spot[spotId]
+    let preview
+    let images = []
+    if(spot?.SpotImages){
+        let spotImages = Object.values(spot?.SpotImages)
+        preview = spotImages.find((spot) => spot?.preview === true)
+        images = spotImages
+        .filter((data) => data?.preview === false)
+        .map((image) => image?.url)
+    }
 
     useEffect(() => {
         const findSpot = async () => {
@@ -36,22 +45,9 @@ function SingleSpot(){
     //     const images = spotImages
     //     .filter((data) => data?.preview === false)
     //     .map((image) => image?.url)
-    //     // console.log(images)
     //     setPreviewImage(preview?.url)
     //     setImages(images)
     // }, [spot])
-
-    if(spot?.SpotImages){
-        const spotImages = Object.values(spot?.SpotImages)
-        
-        const preview = spotImages.find((spot) => spot?.preview === true)
-        const images = spotImages
-        .filter((spot) => spot?.preview === false)
-        .map((image) => image?.url)
-        
-        setPreviewImage(preview?.url)
-        setImages(images)
-    }
 
     const closeMenu = () => setShowMenu(!showMenu);
 
@@ -71,7 +67,8 @@ function SingleSpot(){
             <h3>{spot?.city}, {spot?.state}, {spot?.country}</h3>
             <div className="spot-images">
                 <div>
-                    <img className="spot-image" src={previewImage}/>
+                    {/* <img className="spot-image" src={previewImage}/> */}
+                    <img className="spot-image" src={preview?.url}/>
                 </div>
                 <div>
                     <div>
