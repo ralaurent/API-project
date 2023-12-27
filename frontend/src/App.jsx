@@ -6,7 +6,7 @@ import * as sessionActions from './store/session';
 
 import Spots from './components/pages/Spots'
 import SingleSpot from './components/pages/SingleSpot'
-import CurrentSpot from './components/pages/CurrentSpot'
+import CurrentSpots from './components/pages/CurrentSpots'
 import NewSpot from './components/pages/NewSpot'
 import EditSpot from './components/pages/EditSpot'
 
@@ -46,7 +46,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/spots/current',
-        element: <CurrentSpot/>
+        element: <CurrentSpots/>
       },
       {
         path: '/spots/:spotId/edit',

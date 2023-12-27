@@ -25,9 +25,15 @@ export const login = (user) => async (dispatch) => {
       password
     })
   });
-  const data = await response.json();
-  dispatch(setUser(data.user));
-  return response;
+
+  if(response?.ok){
+    const data = await response.json();
+    dispatch(setUser(data.user));
+    return response;
+  }else{
+    const errors = await response.json()
+    return errors
+  }
 };
 
 export const restoreUser = () => async (dispatch) => {
@@ -49,9 +55,15 @@ export const signup = (user) => async (dispatch) => {
       password
     })
   });
-  const data = await response.json();
-  dispatch(setUser(data.user));
-  return response;
+  if(response?.ok){
+    const data = await response.json();
+    dispatch(setUser(data.user));
+    return response;
+  }else{
+    const errors = await response.json()
+    return errors
+  }
+
 };
 
 export const logout = () => async (dispatch) => {

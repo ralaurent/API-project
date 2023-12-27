@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import * as sessionActions from '../../store/session';
 import OpenModalMenuItem from './OpenModalMenuItem';
 import LoginFormModal from '../LoginFormModal';
@@ -7,6 +8,7 @@ import SignupFormModal from '../SignupFormModal';
 
 function ProfileButton({ user }) {
   const dispatch = useDispatch();
+  const navigate = useNavigate()
   const [showMenu, setShowMenu] = useState(false);
   const divRef = useRef();
 
@@ -35,24 +37,33 @@ function ProfileButton({ user }) {
     e.preventDefault();
     dispatch(sessionActions.logout());
     closeMenu();
+    navigate("/")
   };
 
   const divClassName = "profile-dropdown" + (showMenu ? "" : " hidden");
 
   return (
-    <>
-      <button onClick={toggleMenu}>
-        <i className="fas fa-bars icons" />
-        <i className="fas fa-user-circle icons lrg" />
-      </button>
+    <> 
+      <div className='profile-body'>
+        {user && (<div onClick={() => navigate("/spots/new")} className='create-spot'>Create a New Spot</div>)}
+        <button className="profile" onClick={toggleMenu}>
+            <i className="fas fa-bars icons" />
+            <i className="fas fa-user-circle icons lrg" />
+        </button>
+      </div>
       <div className={divClassName} ref={divRef}>
         {user ? (
           <>
-            <div>{user.username}</div>
-            <div>{user.firstName} {user.lastName}</div>
-            <div>{user.email}</div>
+            <div>Hello, {user.username}!</div>
+            <div>email: {user.email}</div>
             <div>
-              <button onClick={logout}>Log Out</button>
+            <hr></hr>
+            <div className='clickable' onClick={() => navigate("/spots/current")}>Manage Spots</div>
+            {/* <div className='clickable' onClick={() => navigate("/")}>Manage Reviews</div> */}
+            <hr></hr>
+              <div className='logout'>
+              <button className="theme-button" onClick={logout}>Log Out</button>
+              </div>
             </div>
           </>
         ) : (

@@ -21,4 +21,50 @@
   #modal-content {
     position: absolute;
     background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    max-width: 500px;
+    /* gap: 3px */
   }
+
+  .modal-input{
+    border: 1.5px solid black;
+    width: calc(100% - 8px);
+    height: 34px;
+    margin: 5px 0px;
+    /* border-radius: 5px; */
+}
+
+.modal-button{
+    padding: 15px 14px;
+    /* background-color: black; */
+    background-color:gray;
+    /* border-radius: 6px; */
+    border: none;
+    color: white;
+    box-shadow: 5px 5px 0px #000000;
+    width: 100%;
+    margin: 10px 0px 0px 0px;
+}
+
+.modal-theme-button{
+    padding: 15px 14px;
+    background-color: var(--theme-color);
+    /* border-radius: 6px; */
+    border: none;
+    color: white;
+    box-shadow: 5px 5px 0px #000000;
+    width: 100%;
+    margin: 10px 0px 0px 0px;
+}
+
+.modal-button:disabled {
+    opacity: 0.5;
+}
+
+.modal-theme-button:disabled {
+    opacity: 0.5;
+}

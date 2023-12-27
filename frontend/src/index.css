@@ -1,5 +1,37 @@
 /* TODO: Add sitewide styles */
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 html, body{
     margin: 0px;
     padding: 0px;
+    /* font-family: 'Manrope', sans-serif; */
+    font-family: 'Inter', sans-serif;
+}
+
+h1{
+    margin: 16px 0px
+}
+
+h2{
+    margin: 16px 0px
+}
+
+h3{
+    margin: 16px 0px
+}
+
+h4{
+    font-weight: normal;
+    margin: 10px 0px
+}
+
+.lrg{
+    font-size: 25px;
+    height: auto
+}
+
+.md{
+    font-size: 19px;
+    height: auto
 }
