@@ -34,9 +34,9 @@ function SingleSpot(){
         
     //     const preview = spotImages.find((spot) => spot?.preview === true)
     //     const images = spotImages
-    //     console.log(images)
     //     .filter((spot) => spot?.preview === false)
     //     .map((image) => image?.url)
+    //     console.log(images)
     //     setPreviewImage(preview?.url)
     //     setImages(images)
     // }, [spot])
@@ -46,9 +46,10 @@ function SingleSpot(){
         
         const preview = spotImages.find((spot) => spot?.preview === true)
         const images = spotImages
-        console.log(images)
         .filter((spot) => spot?.preview === false)
         .map((image) => image?.url)
+
+        console.log(images)
         setPreviewImage(preview?.url)
         setImages(images)
     }
