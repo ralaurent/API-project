@@ -15,7 +15,6 @@ function SingleSpot(){
     const navigate = useNavigate()
 
     spot = spot[spotId]
-    console.log(spot)
 
     useEffect(() => {
         const findSpot = async () => {
@@ -29,17 +28,30 @@ function SingleSpot(){
         findSpot()
     }, [])
 
-    useEffect(() => {
-        if(!spot?.SpotImages) return
-        const spotImages = Object.values(spot.SpotImages)
+    // useEffect(() => {
+    //     if(!spot?.SpotImages) return
+    //     const spotImages = Object.values(spot.SpotImages)
+        
+    //     const preview = spotImages.find((spot) => spot?.preview === true)
+    //     const images = spotImages
+    //     console.log(images)
+    //     .filter((spot) => spot?.preview === false)
+    //     .map((image) => image?.url)
+    //     setPreviewImage(preview?.url)
+    //     setImages(images)
+    // }, [spot])
+
+    if(spot?.SpotImages){
+        const spotImages = Object.values(spot?.SpotImages)
         
         const preview = spotImages.find((spot) => spot?.preview === true)
         const images = spotImages
+        console.log(images)
         .filter((spot) => spot?.preview === false)
         .map((image) => image?.url)
         setPreviewImage(preview?.url)
         setImages(images)
-    }, [spot])
+    }
 
     const closeMenu = () => setShowMenu(!showMenu);
 
