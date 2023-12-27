@@ -24,7 +24,7 @@ function SingleSpot(){
         .filter((data) => data?.preview === false)
         .map((image) => image?.url)
     }
-    console.log(images)
+    console.log(spot?.SpotImages, images)
 
     useEffect(() => {
         const findSpot = async () => {
