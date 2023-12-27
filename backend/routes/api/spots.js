@@ -229,7 +229,10 @@ router.get('/current', requireAuth, async(req, res) => {
           }, 0)
 
         const image = await spot.getSpotImages({
-            attributes: ['url']
+            attributes: ['url'],
+            where:{
+              preview: true
+            }
         })
         
         updatedSpots.push({
