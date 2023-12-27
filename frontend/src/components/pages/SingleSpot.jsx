@@ -36,7 +36,7 @@ function SingleSpot(){
         const images = spotImages
         .filter((spot) => spot?.preview === false)
         .map((image) => image?.url)
-        console.log(images)
+        // console.log(images)
         setPreviewImage(preview?.url)
         setImages(images)
     }, [spot])
