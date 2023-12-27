@@ -80,22 +80,37 @@ export const addSpot = (spot, images) => async dispatch => {
     if(firstResponse.ok){
         const spot = await firstResponse.json()
 
-        images.forEach(async (image) => {
-            const secondResponse = await csrfFetch(`/api/spots/${spot.id}/images`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(image)
-            })
+        // images.forEach(async (image) => {
+        //     const secondResponse = await csrfFetch(`/api/spots/${spot.id}/images`, {
+        //         method: "POST",
+        //         headers: {
+        //             "Content-Type": "application/json"
+        //         },
+        //         body: JSON.stringify(image)
+        //     })
 
-            if(!secondResponse.ok){
+        //     if(!secondResponse.ok){
+        //         const errors = await secondResponse.json()
+        //         return errors
+        //     }
+        // })
+
+        await Promise.all(images.map(async (image) => {
+            const secondResponse = await csrfFetch(`/api/spots/${spot.id}/images`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify(image)
+            });
+    
+            if (!secondResponse.ok) {
                 const errors = await secondResponse.json()
                 return errors
             }
-        })
+        }))
 
-        dispatch(createSpot(spot))
+        await dispatch(createSpot(spot))
         return spot.id
     }else{
         const errors = await firstResponse.json()
