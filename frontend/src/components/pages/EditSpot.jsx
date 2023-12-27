@@ -25,14 +25,22 @@ function EditSpot(){
         setSubmitted(!submitted)
     }
 
+    const containsOnlyDigits = (input) => {
+        for (let i = 0; i < input.length; i++) {
+          const charCode = input.charCodeAt(i);
+          if (charCode < 48 || charCode > 57) {
+            return false;
+          }
+        }
+        return true;
+    }
+
     const handlePriceChange = (e) => {
-        if(e.target.value === "") return setPrice("")
-        const newValue = e.target.value;
-        const parsedValue = parseFloat(newValue);
-    
-        if (!isNaN(parsedValue)) {
-            setPrice(parsedValue);
-        } 
+        const newValue = e.target.value
+        const parsedValue = parseFloat(newValue)
+        if(containsOnlyDigits(parsedValue)){
+            setPrice(parsedValue)
+        }
     }
 
     let spot = useSelector(state => state.spots)
