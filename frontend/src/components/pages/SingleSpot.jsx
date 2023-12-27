@@ -28,31 +28,31 @@ function SingleSpot(){
         findSpot()
     }, [])
 
-    // useEffect(() => {
-    //     if(!spot?.SpotImages) return
-    //     const spotImages = Object.values(spot.SpotImages)
-        
-    //     const preview = spotImages.find((spot) => spot?.preview === true)
-    //     const images = spotImages
-    //     .filter((spot) => spot?.preview === false)
-    //     .map((image) => image?.url)
-    //     console.log(images)
-    //     setPreviewImage(preview?.url)
-    //     setImages(images)
-    // }, [spot])
-
-    if(spot?.SpotImages){
-        const spotImages = Object.values(spot?.SpotImages)
+    useEffect(() => {
+        if(!spot?.SpotImages) return
+        const spotImages = Object.values(spot.SpotImages)
         
         const preview = spotImages.find((spot) => spot?.preview === true)
         const images = spotImages
         .filter((spot) => spot?.preview === false)
         .map((image) => image?.url)
-
         console.log(images)
         setPreviewImage(preview?.url)
         setImages(images)
-    }
+    }, [spot])
+
+    // if(spot?.SpotImages){
+    //     const spotImages = Object.values(spot?.SpotImages)
+        
+    //     const preview = spotImages.find((spot) => spot?.preview === true)
+    //     const images = spotImages
+    //     .filter((spot) => spot?.preview === false)
+    //     .map((image) => image?.url)
+
+    //     console.log(images)
+    //     setPreviewImage(preview?.url)
+    //     setImages(images)
+    // }
 
     const closeMenu = () => setShowMenu(!showMenu);
 
