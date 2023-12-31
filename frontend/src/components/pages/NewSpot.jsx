@@ -19,6 +19,7 @@ function NewSpot(){
     const [image3, setImage3] = useState("")
     const [image4, setImage4] = useState("")
     const [errors, setErrors] = useState({})
+    const [isLoading, setIsLoading] = useState(false)
     const [submitted, setSubmitted] = useState(false)
     const [firstLoad, setFirstLoad] = useState(true)
     const navigate = useNavigate()
@@ -106,6 +107,7 @@ function NewSpot(){
                 if(image3) images.push({ url: image3, preview: false })
                 if(image4) images.push({ url: image4, preview: false })
 
+                setIsLoading(!isLoading)
                 const spotId = await dispatch(spotActions.addSpot(spot, images))
                 navigate(`/spots/${spotId}`)
             }
@@ -132,6 +134,7 @@ function NewSpot(){
                         value={country}
                         onChange={(e) => setCountry(e.target.value)}
                         placeholder='Country'
+                        maxLength={50}
                     />
                 </label>
                 <label>
@@ -143,6 +146,7 @@ function NewSpot(){
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                         placeholder='Street'
+                        maxLength={50}
                     />
                 </label>
                 <div className="spot-split">
@@ -157,6 +161,7 @@ function NewSpot(){
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                             placeholder='City'
+                            maxLength={50}
                         />
                     </div>
                     <div className="spot-city">
@@ -170,6 +175,7 @@ function NewSpot(){
                             value={state}
                             onChange={(e) => setState(e.target.value)}
                             placeholder='State'
+                            maxLength={50}
                         />
                     </div>
                 </div>
@@ -183,6 +189,7 @@ function NewSpot(){
                 name='description'
                 placeholder='Please write at least 30 characters.'
                 rows='10'
+                maxLength={200}
                 ></textarea>
                 <span className="errors">{errors.description}</span>
                 <hr/>
@@ -194,6 +201,7 @@ function NewSpot(){
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder='Name of your spot'
+                    maxLength={50}
                 />
                 <span className="errors">{errors.name}</span>
                 <hr></hr>
@@ -254,7 +262,7 @@ function NewSpot(){
                 />
                 <span className="errors">{errors.image4}</span>
                 <hr></hr>
-                <button className="theme-button">Create Spot</button>
+                <button className="theme-button">{isLoading ? "Loading..." : "Create Spot"}</button>
             </form>
             </div>
         </div>

@@ -54,7 +54,7 @@ function ReviewModal({ spotId }) {
         placeholder='Leave your review here...'
         rows='10'
         ></textarea>
-        <div onMouseLeave={() => !currentStars ? setNewStars(0) : setNewStars(currentStars)} className='review-stars'>
+        <div onMouseLeave={() => !currentStars ? setNewStars(0) : setNewStars(currentStars)} className='review-stars-content'>
             <div>
             {stars.map((star, index) => (
                 <i key={index} onClick={() => {setCurrentStars(index + 1)}} onMouseEnter={() => setNewStars(index + 1)} className={`${index + 1 <= newStars ? "fas" : "far"} fa-star stars lrg r-m` }/>

@@ -16,6 +16,7 @@ function EditSpot(){
     const [name, setName] = useState("")
     const [price, setPrice] = useState("")
     const [errors, setErrors] = useState({})
+    const [isLoading, setIsLoading] = useState(false)
     const [submitted, setSubmitted] = useState(false)
     const [firstLoad, setFirstLoad] = useState(true)
     const navigate = useNavigate()
@@ -93,6 +94,7 @@ function EditSpot(){
                 let lng = 45.010
                 const spot = { name, address, city, state, country, price, description, lat, lng }
 
+                setIsLoading(!isLoading)
                 dispatch(spotActions.updateSpot(spotId, spot))
                 navigate(`/spots/${spotId}`)
             }
@@ -124,6 +126,7 @@ function EditSpot(){
                         value={country}
                         onChange={(e) => setCountry(e.target.value)}
                         placeholder='Country'
+                        maxLength={50}
                     />
                 </label>
                 <label>
@@ -135,6 +138,7 @@ function EditSpot(){
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
                         placeholder='Street'
+                        maxLength={50}
                     />
                 </label>
                 <div className="spot-split">
@@ -149,6 +153,7 @@ function EditSpot(){
                             value={city}
                             onChange={(e) => setCity(e.target.value)}
                             placeholder='City'
+                            maxLength={50}
                         />
                     </div>
                     <div className="spot-city">
@@ -162,6 +167,7 @@ function EditSpot(){
                             value={state}
                             onChange={(e) => setState(e.target.value)}
                             placeholder='State'
+                            maxLength={50}
                         />
                     </div>
                 </div>
@@ -175,6 +181,7 @@ function EditSpot(){
                 name='description'
                 placeholder='Description'
                 rows='10'
+                maxLength={200}
                 ></textarea>
                 <span className="errors">{errors.description}</span>
                 <hr/>
@@ -186,6 +193,7 @@ function EditSpot(){
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder='Name of your spot'
+                    maxLength={50}
                 />
                 <span className="errors">{errors.name}</span>
                 <hr></hr>
@@ -203,7 +211,7 @@ function EditSpot(){
                 </div>
                 <span className="errors">{errors.price}</span>
                 <hr></hr>
-                <button className="theme-button">Update your Spot</button>
+                <button className="theme-button">{isLoading ? "Loading..." : "Update your Spot"}</button>
             </form>
             </div>
         </div>

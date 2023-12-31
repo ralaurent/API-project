@@ -346,5 +346,11 @@ button.reserve{
     max-width: fit-content;
     display: flex;
     align-items: baseline;
+}
+
+.review-stars-content{
+    max-width: fit-content;
+    display: flex;
+    align-items: baseline;
     gap: 5px
 }
