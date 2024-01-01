@@ -63,7 +63,7 @@ function ReviewModal({ spotId }) {
             <h4>Stars</h4>
         </div>
         
-        <button disabled={reviewText.length < 30 || !currentStars} onClick={(e) => createReview(e)} className='modal-theme-button'>Submit Your Review</button>
+        <button disabled={reviewText.length < 10 || !currentStars} onClick={(e) => createReview(e)} className='modal-theme-button'>Submit Your Review</button>
     </div>
   );
 }

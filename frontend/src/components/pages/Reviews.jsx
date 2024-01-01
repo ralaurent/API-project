@@ -64,7 +64,7 @@ function Reviews({ spotId, ownerId, avgRating }){
                 {sessionUser?.id && review.userId == sessionUser.id ?
                 <b><span>You</span></b>
                 :
-                <b><span>{review?.User?.firstName} {review?.User?.lastName}</span></b>
+                <b><span>{review?.User?.firstName}</span></b>
                 }    
                 <div className="review-stars">
                     {stars.map((star, index) => (

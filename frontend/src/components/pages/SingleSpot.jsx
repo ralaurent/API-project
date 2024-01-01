@@ -85,7 +85,7 @@ function SingleSpot(){
 
                     <div className="spot-stats">
                         {spot?.numReviews == 0 ? 
-                        <span><b>New</b></span>
+                        <span><i className="fas fa-star stars md" /><b>New</b></span>
                         :
                         <>
                             <span><i className="fas fa-star stars" /><b>{Number(spot?.avgRating).toFixed(1)}</b></span>

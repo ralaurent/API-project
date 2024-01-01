@@ -33,6 +33,10 @@
     /* background-color: red; */
 }
 
+.spot:hover{
+ cursor: pointer;
+}
+
 @media (max-width: 1200px) {
     .spots-body{
         grid-template-columns: repeat(3, 1fr);

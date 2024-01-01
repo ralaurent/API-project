@@ -25,6 +25,10 @@ button.profile{
     position: relative;
 }
 
+.profile:hover{
+    cursor: pointer;
+}
+
 .profile-dropdown{
     position: absolute;
     background-color: white;
