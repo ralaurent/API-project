@@ -49,6 +49,7 @@ function ProfileButton({ user }) {
         <button className="profile" onClick={toggleMenu}>
             <i className="fas fa-bars icons" />
             <i className="fas fa-user-circle icons lrg" />
+            <div>test</div>
         </button>
       </div>
       <div className={divClassName} ref={divRef}>

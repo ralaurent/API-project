@@ -12,9 +12,9 @@ function Spots(){
     let images = document.querySelectorAll('.image span');
 
     window.onmousemove = function (e) {
-        let x = (e.clientX + 20) + 'px',
+        var x = (e.clientX + 20) + 'px',
             y = (e.clientY + 20) + 'px';
-        for (let i = 0; i < images.length; i++) {
+        for (var i = 0; i < images.length; i++) {
             images[i].style.top = y;
             images[i].style.left = x;
         }
