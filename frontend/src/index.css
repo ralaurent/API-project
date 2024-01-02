@@ -35,3 +35,7 @@ h4{
     font-size: 19px;
     height: auto
 }
+
+button:hover{
+    cursor: pointer;
+}
