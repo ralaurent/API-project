@@ -13,23 +13,12 @@ function CurrentSpots(){
     const [showMenu, setShowMenu] = useState(false)
     const { closeModal } = useModal();
     const navigate = useNavigate()
-
-    let images = document.querySelectorAll('.image span');
      
     const deleteSpot = (e, spotId) => {
         e.stopPropagation()
         dispatch(spotActions.deleteSpot(spotId))
         closeModal()
     }
-
-    window.onmousemove = function (e) {
-        let x = (e.clientX + 20) + 'px',
-            y = (e.clientY + 20) + 'px';
-        for (let i = 0; i < images.length; i++) {
-            images[i].style.top = y;
-            images[i].style.left = x;
-        }
-    };
 
     const updateSpot = (e, spotId) => {
         e.stopPropagation() 

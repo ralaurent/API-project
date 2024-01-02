@@ -55,18 +55,20 @@
     background-color: #C4C4C4;
     border-radius: 20px;
     position: relative;
-    text-decoration:none;
+    text-decoration: none;
     overflow: hidden;
 }
 
-.image span {
-    display: none;
+.image > span {
+    display: none; 
 }
 
-.image:hover span {
-    display: block;
-    position: fixed;
-    overflow: hidden;
+.image:hover > span {
+    display: flex; 
+    position: absolute;
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 .spot-image{

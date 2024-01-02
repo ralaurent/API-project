@@ -9,17 +9,6 @@ function Spots(){
     const navigate = useNavigate()
     let spots = useSelector(state => state.spots)
 
-    let images = document.querySelectorAll('.image span');
-
-    window.onmousemove = function (e) {
-        var x = (e.clientX + 20) + 'px',
-            y = (e.clientY + 20) + 'px';
-        for (var i = 0; i < images.length; i++) {
-            images[i].style.top = y;
-            images[i].style.left = x;
-        }
-    };
-
     spots = Object.values(spots)
 
     useEffect(() => {

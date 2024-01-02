@@ -28,10 +28,17 @@ h4{
 
 .lrg{
     font-size: 25px;
-    height: auto
 }
 
 .md{
     font-size: 19px;
-    height: auto
 }
+
+i.fa {
+    -webkit-animation: show 1s 1;
+    /* any other properties to override from FontAwesome's default .fa rule */
+  }
+  @-webkit-keyframes show {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
