@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from 'react-redux';
-import OpenModalMenuItem from '../Navigation/OpenModalMenuItem';
+import OpenModalButton from '../OpenModalButton';
 import * as reviewActions from '../../store/reviews'
 import * as spotActions from '../../store/spots'
 import DeleteModal from "./DeleteModal";
@@ -50,13 +50,13 @@ function Reviews({ spotId, ownerId, avgRating }){
             <b><div className="md">{reviews.length <= 1 ? `${reviews.length} Review` : `${reviews.length} Reviews`}</div></b>
         </div>
         }
-        {sessionUser?.id && sessionUser?.id !== ownerId && !reviews.some((review) => review.userId == sessionUser.id) && <button className="theme-button">
-        <OpenModalMenuItem
-            itemText="Post a Review"
+        {sessionUser?.id && sessionUser?.id !== ownerId && !reviews.some((review) => review.userId == sessionUser.id) && 
+        <OpenModalButton
+            buttonText="Post a Review"
             onItemClick={closeMenu}
             modalComponent={<ReviewModal spotId={spotId}/>}
-        />
-        </button>}
+            buttonStyle={"theme-button"}
+        />}
         {sessionUser?.id && sessionUser?.id !== ownerId && !reviews.length && <h4>Be the first to post a review</h4>}
         {reviews.map((review) => (
             <div key={review.id} className={sessionUser?.id && review.userId == sessionUser.id ? "review-content r-b" : "review-content"}>
@@ -77,13 +77,13 @@ function Reviews({ spotId, ownerId, avgRating }){
                 </div>
                 <span>{new Date(review?.updatedAt).toLocaleString('en-US', { month: 'long' })} {new Date(review?.updatedAt).getFullYear()}</span>
                 <span>{review?.review}</span>
-                {sessionUser?.id && review.userId == sessionUser.id && <button className="theme-button">
-                <OpenModalMenuItem
-                    itemText="Delete"
+                {sessionUser?.id && review.userId == sessionUser.id &&
+                <OpenModalButton
+                    buttonText="Delete"
                     onItemClick={closeMenu}
                     modalComponent={<DeleteModal header={"Confirm Delete"} body={"Are you sure you want to delete this review?"} action={(e) => {deleteReview(e, review.id)}}/>}
-                />
-                </button>}
+                    buttonStyle={"theme-button"}
+                />}
             </div>
         ))}
         </div>

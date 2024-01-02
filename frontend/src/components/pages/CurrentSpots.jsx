@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import * as spotActions from '../../store/spots'
-import OpenModalMenuItem from '../Navigation/OpenModalMenuItem';
+import OpenModalButton from '../OpenModalButton';
 import { useNavigate } from "react-router-dom"; 
 import { useModal } from '../../context/Modal';
 import DeleteModal from "./DeleteModal";
@@ -15,12 +15,7 @@ function CurrentSpots(){
     const navigate = useNavigate()
 
     let images = document.querySelectorAll('.image span');
-
-    const openDeleteModal = (e) => {
-        e.stopPropagation()
-        setShowMenu(!showMenu)
-    } 
-
+     
     const deleteSpot = (e, spotId) => {
         e.stopPropagation()
         dispatch(spotActions.deleteSpot(spotId))
@@ -79,13 +74,12 @@ function CurrentSpots(){
                     <span><b>${spot.price}</b> night</span>
                     <div className="manage-spot-buttons">
                         <button className="theme-button" onClick={(e) => updateSpot(e, spot.id)}>Update</button>
-                        <button className="theme-button" onClick={(e) => openDeleteModal(e)}>
-                        <OpenModalMenuItem
-                            itemText="Delete"
+                        <OpenModalButton
+                            buttonText="Delete"
                             onItemClick={closeMenu}
                             modalComponent={<DeleteModal header={"Confirm Delete"} body={"Are you sure you want to remove this spot from the listings?"} action={(e) => deleteSpot(e, spot.id)}/>}
+                            buttonStyle={"theme-button"}
                         />
-                        </button>
                     </div>
                 </div>
             ))}

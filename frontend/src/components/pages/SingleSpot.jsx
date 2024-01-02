@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from 'react-redux';
 import * as spotActions from '../../store/spots'
 import { useParams, useNavigate } from "react-router-dom";
-import OpenModalMenuItem from "../Navigation/OpenModalMenuItem";
+import OpenModalButton from "../OpenModalButton";
 import Reviews from "./Reviews";
 
 function SingleSpot(){
@@ -95,12 +95,13 @@ function SingleSpot(){
                         }
                     </div>
                     </div>
-                    <button className="reserve">
-                        <OpenModalMenuItem
-                            itemText="Reserve"
-                            onItemClick={closeMenu}
-                            modalComponent={<ComingSoon/>}
-                        /></button>
+                    <OpenModalButton
+                        buttonText="Reserve"
+                        onItemClick={closeMenu}
+                        modalComponent={<ComingSoon/>}
+                        buttonStyle={"reserve"}
+
+                    />
                 </div>
             </div>
             <hr></hr>
