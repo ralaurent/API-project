@@ -31,9 +31,9 @@ function NewSpot(){
 
     const containsOnlyDigits = (input) => {
         for (let i = 0; i < input.length; i++) {
-          const charCode = input.charCodeAt(i);
+          const charCode = input.charCodeAt(i)
           if (charCode < 48 || charCode > 57) {
-            return false;
+            return false
           }
         }
         return true;
