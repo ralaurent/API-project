@@ -45,6 +45,9 @@
 }
 
 @media (max-width: 850px) {
+    .spots-container{
+        padding: 25px
+    }
     .spots-body{
         grid-template-columns: repeat(2, 1fr);
     }
