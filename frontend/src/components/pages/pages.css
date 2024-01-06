@@ -102,9 +102,9 @@
 
 }
 
-@media (max-width: 450px) {
+@media (max-width: 540px) {
     .spot-location{
-        max-width: 120px;
+        max-width: 100px;
     }
 }
 
