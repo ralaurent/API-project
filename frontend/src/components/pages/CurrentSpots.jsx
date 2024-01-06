@@ -54,7 +54,9 @@ function CurrentSpots(){
                             <span>{spot.name}</span>
                         </div>
                         <div className="spot-header">
-                            <div>{spot.city}, {spot.state}</div>
+                            <div className="spot-location">
+                                <div className="spot-location-ellipsis">{spot.city}, {spot.state}</div>
+                            </div>
                             {spot.avgRating == 0 ?
                             <span><b>New</b></span>
                             :

@@ -22,7 +22,6 @@
     gap: 16px;
     width: 100%;
     max-width: 1200px;
-    background-color: red;
 }
   
 .spot {
@@ -83,8 +82,30 @@
 
 .spot-header{
     display: flex;
+    width: 100%;
     justify-content: space-between;
     align-items: baseline;
+    /* background-color: blue; */
+}
+
+.spot-location{
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.spot-location-ellipsis{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    flex-grow: 1;
+
+}
+
+@media (max-width: 450px) {
+    .spot-location{
+        max-width: 120px;
+    }
 }
 
 /* Single Spot */
@@ -299,6 +320,7 @@ button.reserve{
 
 .no-wrap {
     white-space: nowrap;
+    width: fit-content
   }
 
   /* Reviews */
